@@ -1,6 +1,6 @@
 <?php
 /**
- * StupidlySimple Framework - A PHP Framework For Lazy Developers
+ * StupidlySimple Framework - A PHP Framework For Lazy Developers.
  *
  * Copyright (c) 2017 Fariz Luqman
  *
@@ -22,31 +22,31 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @package     StupidlySimple
  * @author      Fariz Luqman <fariz.fnb@gmail.com>
  * @copyright   2017 Fariz Luqman
  * @license     MIT
+ *
  * @link        https://stupidlysimple.github.io/
  */
+
 namespace Simplyfier;
 
-use Simplyfier\Debugger;
 use Simplyfier\DI\Sharer;
 
 /**
  * The Viewer - View template files
- * -----------------------------------------------------------------------
+ * -----------------------------------------------------------------------.
  *
  * Reads and render the template file. Responsible for injecting
  * dependencies from both Container and the Core\Sharer
  *
  * @since 0.5.0
  */
-class Viewer {
-
+class Viewer
+{
     /**
      * the hive is where all data is stored, which is then usable from all template
-     * files
+     * files.
      *
      * @since 0.5.0
      */
@@ -56,27 +56,28 @@ class Viewer {
      * Finds, renders and displays a template file. Reports a 404 error in
      * case of missing files.
      *
-     * @param string	$file		file name / path to the file
-     * @param array		$data	array of data
+     * @param string $file file name / path to the file
+     * @param array  $data array of data
      *
      * @static
-     * @access public
+     *
      * @see Viewer::render()
      * @since 0.5.0
      */
-    public static function file($file, array $data = []) {
+    public static function file($file, array $data = [])
+    {
         // Do you love displaying blank pages?
         if ($file === 'index' || $file === 'index.php') {
             Debugger::report(404, true);
         } else {
             /**
              * Get the path of the calling script and get it's containing Directory
-             * to enable include() style of accessing files
+             * to enable include() style of accessing files.
              */
             $calling_script_path = debug_backtrace()[0]['file'];
             $calling_script_directory = realpath(dirname($calling_script_path));
 
-            /**
+            /*
              * Check if file exists, try directories
              * 1. in the same directory as the calling script
              * 2. same as #1 but without .tpl.php
@@ -89,13 +90,13 @@ class Viewer {
                 self::render($render_path, $data);
             } elseif (file_exists($render_path = $calling_script_directory.'/'.$file)) {
                 self::render($render_path, $data);
-            } elseif(file_exists($render_path = SS_PATH.'/resources/views/'.$file.'.tpl.php')) {
+            } elseif (file_exists($render_path = SS_PATH.'/resources/views/'.$file.'.tpl.php')) {
                 self::render($render_path, $data);
-            }  elseif(file_exists($render_path = SS_PATH.'/resources/views/'.$file)) {
+            } elseif (file_exists($render_path = SS_PATH.'/resources/views/'.$file)) {
                 self::render($render_path, $data);
-            } elseif(file_exists($render_path = SS_PATH.'/'.$file.'.tpl.php')) {
+            } elseif (file_exists($render_path = SS_PATH.'/'.$file.'.tpl.php')) {
                 self::render($render_path, $data);
-            } elseif(file_exists($render_path = SS_PATH.'/'.$file)) {
+            } elseif (file_exists($render_path = SS_PATH.'/'.$file)) {
                 self::render($render_path, $data);
             } else {
                 Debugger::report(404, true);
@@ -106,17 +107,16 @@ class Viewer {
     /**
      * Renders a template file. Inject dependencies from the Application
      * Container and the Core\Sharer before viewing the file. Also,
-     * extracts $data into variables usable from the template files
+     * extracts $data into variables usable from the template files.
      *
      * The template file will be echoed in the scope of this static
      * private method.
      *
-     * @param string	$file		file name / path to the file
+     * @param string $file file name / path to the file
      *
      * @static
-     * @access private
-     * @since 0.5.0
      *
+     * @since 0.5.0
      */
     private static function render($file, $data)
     {
@@ -136,7 +136,7 @@ class Viewer {
 
         // Capture all contents of the template file into string $input
         ob_start();
-        include($file);
+        include $file;
         $input = ob_get_contents();
         ob_end_clean();
 
@@ -144,15 +144,16 @@ class Viewer {
         $output = preg_replace_callback('!\{\{(.*?)\}\}!', 'Viewer::replace', $input);
 
         // Display final output of the template file
-        echo($output);
+        echo $output;
     }
 
     /**
-     * Replace {{ }} with values
+     * Replace {{ }} with values.
      *
      * @static
-     * @access private
+     *
      * @param $matches
+     *
      * @return mixed
      *
      * @since 0.5.0
@@ -173,10 +174,10 @@ class Viewer {
                 list($function, $parenthesis) = explode('()', $property);
 
                 // Execute the method and return the value given by the method
-                return(self::$hive[$object]->$function());
+                return self::$hive[$object]->$function();
             } else {
                 // Return the property of the object from the hive
-                return(self::$hive[$object]->$property);
+                return self::$hive[$object]->$property;
             }
         } else {
             if (strpos($matches[1], '()') !== false) {
@@ -185,10 +186,9 @@ class Viewer {
 
                 // Execute function and return the value given by the function
                 return self::$hive[$function]();
-            }elseif(isset(self::$hive[$matches[1]])){
+            } elseif (isset(self::$hive[$matches[1]])) {
                 return self::$hive[$matches[1]];
             }
         }
     }
-
 }
