@@ -1,6 +1,6 @@
 {
     "name": "simplyfier/viewer",
-    "description": "Manage everything related to Date and Time",
+    "description": "Views the template file",
     "keywords": ["time tracking", "micro framework","lazy","stupidly simple", "php framework", "php 7", "hhvm"],
     "license": "MIT",
     "type": "project",
